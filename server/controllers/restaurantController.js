@@ -22,6 +22,10 @@ exports.restaurantHomepage = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error fetching restaurants",
+    });
   }
 };
 
@@ -29,7 +33,6 @@ exports.addRestaurantForm = async (req, res) => {
   res.render("restaurant/add");
 };
 
-// Create restaurant
 exports.createRestaurantController = async (req, res) => {
   try {
     const {
@@ -46,34 +49,34 @@ exports.createRestaurantController = async (req, res) => {
       location,
     } = req.body;
 
-    // validasi
+    // Validation
     if (!title || !location) {
-      return res.status(500).send({
+      return res.status(400).send({
         success: false,
         message: "Title and location are required fields.",
       });
     }
 
-    // Proses pembuatan restoran.
+    // Create restaurant
     const newRestaurant = new restaurantModel({
-      title: title,
-      imageUrl: imageUrl,
-      foods: foods,
-      time: time,
-      pickup: pickup,
-      delivery: delivery,
-      isOpen: isOpen,
-      rating: rating,
-      ratingCount: ratingCount,
-      code: code,
-      location: location,
+      title,
+      imageUrl,
+      foods,
+      time,
+      pickup,
+      delivery,
+      isOpen,
+      rating,
+      ratingCount,
+      code,
+      location,
     });
 
-    // Simpan restoran yang baru dibuat ke dalam database
+    // Save the new restaurant to the database
     await newRestaurant.save();
 
-    // Mengirim respon berhasil
-    res.status(200).send({
+    // Send success response
+    res.status(201).send({
       success: true,
       message: "Restaurant created successfully.",
       restaurant: newRestaurant,
@@ -82,12 +85,11 @@ exports.createRestaurantController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error in creating restaurant. Please try again later.",
+      message: "Error creating restaurant.",
     });
   }
 };
 
-// get all restaurant
 exports.getAllRestaurantController = async (req, res) => {
   try {
     const restaurants = await restaurantModel.find({});
@@ -106,24 +108,20 @@ exports.getAllRestaurantController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message:
-        "Failed to fetch restaurant list. There was an error on the server.",
-      error: error,
+      message: "Failed to fetch restaurant list.",
     });
   }
 };
 
-// get restaurant by id
 exports.getRestaurantByIdController = async (req, res) => {
   try {
     const restaurantId = req.params.id;
     if (!restaurantId) {
-      return res.status(404).send({
+      return res.status(400).send({
         success: false,
         message: "Restaurant ID not provided.",
       });
     }
-    // Temukan restoran
     const restaurant = await restaurantModel.findById(restaurantId);
     if (!restaurant) {
       return res.status(404).send({
@@ -131,38 +129,38 @@ exports.getRestaurantByIdController = async (req, res) => {
         message: "Restaurant not found.",
       });
     }
-
-    // Render halaman view dengan data restoran
-    res.render("restaurant/view", { restaurant });
+    res.status(200).send({
+      success: true,
+      restaurant,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error fetching restaurant data by ID.",
-      error: error,
+      message: "Error fetching restaurant data.",
     });
   }
 };
 
-//DELETE RESTRURNAT
 exports.deleteRestaurantController = async (req, res) => {
   try {
     const restaurantId = req.params.id;
     if (!restaurantId) {
-      return res.status(404).send({
+      return res.status(400).send({
         success: false,
-        message: "No Restaurant Found or Restaurant ID Not Provided",
+        message: "Restaurant ID not provided.",
       });
     }
     await restaurantModel.findByIdAndDelete(restaurantId);
-    // Redirect ke halaman utama setelah penghapusan berhasil
-    res.redirect("/rest/restaurant");
+    res.status(200).send({
+      success: true,
+      message: "Restaurant deleted successfully.",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error in delete restaurant API",
-      error,
+      message: "Error deleting restaurant.",
     });
   }
 };
