@@ -25,10 +25,6 @@ exports.categoryHomepage = async (req, res) => {
   }
 };
 
-// exports.addRestaurantForm = async (req, res) => {
-//   res.render("restaurant/add");
-// };
-
 exports.createCatController = async (req, res) => {
   try {
     const { title, imageUrl } = req.body;
@@ -42,7 +38,7 @@ exports.createCatController = async (req, res) => {
     }
 
     // Proses pembuatan kategori
-    const newCategory = new category({ title, imageUrl });
+    const newCategory = new categoryModel({ title, imageUrl });
     await newCategory.save();
     res.status(201).send({
       success: true,
@@ -62,7 +58,7 @@ exports.createCatController = async (req, res) => {
 
 exports.getAllCatController = async (req, res) => {
   try {
-    const categories = await category.find({});
+    const categories = await categoryModel.find({});
     if (!categories) {
       return res.status(404).send({
         success: false,
@@ -78,7 +74,7 @@ exports.getAllCatController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Erorr in get All Categpry API",
+      message: "Error in get All Category API",
       error,
     });
   }
@@ -88,7 +84,7 @@ exports.updateCatController = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, imageUrl } = req.body;
-    const updatedCategory = await category.findByIdAndUpdate(
+    const updatedCategory = await categoryModel.findByIdAndUpdate(
       id,
       { title, imageUrl },
       { new: true }
@@ -107,7 +103,7 @@ exports.updateCatController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "error in update cat api",
+      message: "Error in update cat api",
       error,
     });
   }
@@ -122,14 +118,14 @@ exports.deleteCatController = async (req, res) => {
         message: "Please provide the ID of the category.",
       });
     }
-    const category = await category.findById(id);
+    const category = await categoryModel.findById(id);
     if (!category) {
       return res.status(500).send({
         success: false,
         message: "No category was found with this ID.",
       });
     }
-    await category.findByIdAndDelete(id);
+    await categoryModel.findByIdAndDelete(id);
     res.status(200).send({
       success: true,
       message: "The category was deleted successfully.",
@@ -138,7 +134,7 @@ exports.deleteCatController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "error in Dlete Cat APi",
+      message: "Error in Delete Cat API",
       error,
     });
   }
