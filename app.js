@@ -54,9 +54,24 @@ app.use("/foods", require("./server/routes/food"));
 app.use("/cat", require("./server/routes/category"));
 
 // Handle 404
-app.get("*", (req, res) => {
-  res.status(404).render("404");
+// app.get("*", (req, res) => {
+//   res.status(404).render("404");
+// });
+
+// Render login page without layout
+app.get("/login", (req, res) => {
+  res.render("login", { layout: false });
 });
+
+// Render register page without layout
+app.get("/register", (req, res) => {
+  res.render("register", { layout: false });
+});
+
+app.get("/dashboard", (req, res) => {
+    res.render("dashboard");
+  });
+
 
 app.listen(port, () => {
   console.log(`App listeing on port ${port}`);

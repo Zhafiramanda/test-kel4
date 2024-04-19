@@ -14,8 +14,8 @@ exports.registerController = async (req, res) => {
       });
     }
     // check user
-    const exisiting = await userModel.findOne({ email });
-    if (exisiting) {
+    const existing = await userModel.findOne({ email });
+    if (existing) {
       return res.status(500).send({
         success: false,
         message: "Email Already Registered, please Login",
@@ -82,12 +82,30 @@ exports.loginController = async (req, res) => {
       message: "Login Successfully",
       token,
       user,
+      redirect: "dashboard",
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
       message: "Error In Login API",
+      error,
+    });
+  }
+};
+
+// Logout Controller
+exports.logoutController = async (req, res) => {
+  try {
+    res.status(200).send({
+      success: true,
+      message: "Logout Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error In Logout API",
       error,
     });
   }
