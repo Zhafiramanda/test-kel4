@@ -1,0 +1,83 @@
+<div
+  class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+>
+  <h1 class="h2">Category List</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <div class="btn-group me-2">
+      <a href="/add" class="btn btn-sm btn-outline-secondary">+ New Category</a>
+    </div>
+  </div>
+</div>
+
+<% messages.forEach(element => { %>
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <%= element %>
+  <button
+    type="button"
+    class="btn-close"
+    data-bs-dismiss="alert"
+    aria-label="Close"
+  ></button>
+</div>
+<% }) %>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <% categories.forEach(category => { %>
+  <div class="col">
+    <div class="card">
+      <img
+        src="<%= category.imageUrl %>"
+        class="card-img-top"
+        alt="Category Image"
+      />
+      <div class="card-body">
+        <h5 class="card-title"><%= category.title %></h5>
+      </div>
+      <div class="card-footer d-flex justify-content-end">
+        <form
+          action="/category/delete/<%= category._id %>?_method=DELETE"
+          method="POST"
+        >
+          <button type="submit" class="btn btn-danger btn-small">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <% }) %>
+</div>
+
+<% if (categories.length > 0) { %>
+<nav aria-label="Dashboard Pagination">
+  <ul class="pagination justify-content-center mt-5">
+    <% if (current == 1) { %>
+    <li class="page-item disabled"><a href="#" class="page-link">First</a></li>
+    <% } else { %>
+    <li class="page-item">
+      <a href="/category?page=1" class="page-link">First</a>
+    </li>
+    <% } %> <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %> <% if
+    (i !== 1) { %>
+    <li class="page-item disabled"><a href="#" class="page-link">...</a></li>
+    <% } %> <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %> <% if
+    (i == current) { %>
+    <li class="page-item disabled">
+      <a href="#" class="page-link"><%= i %></a>
+    </li>
+    <% } else { %>
+    <li class="page-item">
+      <a href="/category?page=<%= i %>" class="page-link"><%= i %></a>
+    </li>
+    <% } %> <% if (i == Number(current) + 4 && i < pages) { %>
+    <li class="page-item disabled"><a href="#" class="page-link">...</a></li>
+    <% } %> <% } %> <% if (current == pages) { %>
+    <li class="page-item disabled"><a href="#" class="page-link">Last</a></li>
+    <% } else { %>
+    <li class="page-item">
+      <a href="/category?page=<%= pages %>" class="page-link">Last</a>
+    </li>
+    <% } %>
+  </ul>
+</nav>
+<% } %>
